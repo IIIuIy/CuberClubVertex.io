@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>О клубе | Vertex-Hub</title>
+<script src="auth.js"></script>
+<script src="modal.js"></script>
+
+<style>
+:root{
+--dark-bg:#1a1a1a;
+--neon-blue:#00f2ff;
+--white:#ffffff;
+--gray-light:#333333;
+--gray-dark:#0d0d0d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:'Inter',sans-serif;
+background:var(--dark-bg);
+color:var(--white);
+line-height:1.6;
+}
+.mono-font{font-family:'JetBrains Mono',monospace}
+
+/* HEADER */
+.header{
+position:fixed;top:0;width:100%;
+background:rgba(26,26,26,.95);
+border-bottom:1px solid var(--neon-blue);
+z-index:1000;padding:1rem 2rem
+}
+.header-content{
+max-width:1200px;margin:auto;
+display:flex;justify-content:space-between;align-items:center
+}
+.logo{color:var(--neon-blue);font-size:1.5rem;font-weight:700;text-decoration:none}
+.nav-menu{list-style:none;display:flex;gap:2rem}
+.nav-link{color:#fff;text-decoration:none;transition:.3s}
+.nav-link:hover{color:var(--neon-blue)}
+.nav-link.active{color:var(--neon-blue)}
+.btn-login{
+background:none;border:1px solid var(--neon-blue);
+color:var(--neon-blue);
+padding:.5rem 1.2rem;border-radius:6px;
+cursor:pointer;transition:.3s
+}
+.btn-login:hover{box-shadow:0 0 10px var(--neon-blue)}
+.user-info{color:var(--neon-blue);display:flex;gap:1rem;align-items:center}
+.btn-logout{
+background:none;border:1px solid #ff4d4d;
+color:#ff4d4d;padding:.5rem 1rem;
+border-radius:6px;cursor:pointer;transition:.3s
+}
+.btn-logout:hover{box-shadow:0 0 10px #ff4d4d}
+
+/* MAIN CONTENT */
+.main-content{
+padding-top:6rem;
+min-height:100vh;
+max-width:1200px;
+margin:0 auto;
+padding-left:2rem;
+padding-right:2rem;
+}
+
+.page-title{
+font-size:3rem;
+color:var(--neon-blue);
+text-align:center;
+margin-bottom:3rem;
+text-shadow:0 0 20px var(--neon-blue);
+}
+
+.section{
+background:var(--gray-light);
+padding:2rem;
+border-radius:10px;
+border:1px solid var(--neon-blue);
+margin-bottom:2rem;
+}
+
+.section h2{
+color:var(--neon-blue);
+margin-bottom:1rem;
+font-size:1.8rem;
+}
+
+.features{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:2rem;
+margin-top:2rem;
+}
+
+.feature-card{
+background:var(--gray-dark);
+padding:1.5rem;
+border-radius:8px;
+border:1px solid var(--neon-blue);
+transition:.3s;
+}
+
+.feature-card:hover{
+box-shadow:0 0 20px rgba(0,242,255,.3);
+transform:translateY(-5px);
+}
+
+.feature-card h3{
+color:var(--neon-blue);
+margin-bottom:.5rem;
+}
+
+.feature-icon{
+font-size:2rem;
+margin-bottom:1rem;
+}
+
+
+a{color:var(--neon-blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* MOBILE RESPONSIVE */
+@media (max-width:768px){
+.header{padding:.8rem 1rem}
+.header-content{
+flex-direction:column;
+align-items:flex-start;
+gap:.8rem;
+}
+.nav-menu{
+width:100%;
+flex-direction:column;
+gap:.8rem;
+}
+.main-content{
+padding-left:1rem;
+padding-right:1rem;
+padding-top:5rem;
+}
+.page-title{font-size:2rem}
+.features{
+grid-template-columns:1fr;
+gap:1rem;
+}
+}
+
+/* MODAL STYLES */
+.modal-overlay{
+position:fixed;inset:0;
+background:rgba(0,0,0,.8);
+display:flex;justify-content:center;align-items:center;
+opacity:0;visibility:hidden;transition:.3s;
+z-index:2000
+}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal{
+background:var(--gray-light);
+padding:2rem;border-radius:10px;
+width:90%;max-width:400px;
+border:1px solid var(--neon-blue)
+}
+.modal-header{
+display:flex;justify-content:space-between;
+align-items:center;margin-bottom:1.2rem
+}
+.modal-title{color:var(--neon-blue)}
+.close-btn{
+background:none;border:none;
+color:#fff;font-size:1.5rem;
+cursor:pointer
+}
+.form-input{
+width:100%;padding:.7rem;
+margin-bottom:.8rem;
+background:var(--dark-bg);
+border:1px solid var(--neon-blue);
+color:#fff;border-radius:5px
+}
+.form-input:focus{outline:none;box-shadow:0 0 5px var(--neon-blue)}
+.btn-submit{
+width:100%;padding:.7rem;
+background:var(--neon-blue);
+color:#000;border:none;
+border-radius:5px;
+font-weight:700;cursor:pointer;transition:.3s
+}
+.btn-submit:hover{box-shadow:0 0 15px var(--neon-blue)}
+.small{text-align:center;margin-top:.8rem;font-size:.9rem}
+.error{
+color:#ff4d4d;font-size:.85rem;
+display:none;margin-bottom:.5rem;
+padding:.5rem;background:rgba(255,77,77,.1);
+border-radius:5px
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<div class="header-content">
+<a href="index.html" class="logo mono-font">Vertex-Hub</a>
+<ul class="nav-menu">
+<li><a class="nav-link active" href="about.html">О клубе</a></li>
+<li><a class="nav-link" href="tournaments.html">Турниры</a></li>
+<li><a class="nav-link" href="rental.html">Аренда</a></li>
+<li><a class="nav-link" href="contacts.html">Контакты</a></li>
+</ul>
+<div id="authSection">
+<button class="btn-login" onclick="window.location.href='index.html'">Войти</button>
+</div>
+</div>
+</header>
+
+<main class="main-content">
+<h1 class="page-title mono-font">О клубе Vertex-Hub</h1>
+
+<div class="section">
+<h2>Наша миссия</h2>
+<p>
+Vertex-Hub — это современный киберспортивный клуб, созданный для тех, кто живёт играми.
+Мы предоставляем не просто место для игр, а целую экосистему для развития в киберспорте:
+от новичков до профессиональных игроков.
+</p>
+</div>
+
+<div class="section">
+<h2>Почему именно мы?</h2>
+<div class="features">
+<div class="feature-card">
+<div class="feature-icon">🖥️</div>
+<h3>Топовое оборудование</h3>
+<p>RTX 4080, Intel i9, 240Hz мониторы — всё для максимальной производительности</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">⚡</div>
+<h3>Низкий пинг</h3>
+<p>Прямое подключение к игровым серверам. Скорость интернета до 1 Гбит/с</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">🎮</div>
+<h3>Все популярные игры</h3>
+<p>CS2, Dota 2, Valorant, League of Legends, Fortnite и многое другое</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">🏆</div>
+<h3>Турниры</h3>
+<p>Еженедельные турниры с призовыми фондами. Участвуй и побеждай!</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">👥</div>
+<h3>Комьюнити</h3>
+<p>Найди тиммейтов, общайся с единомышленниками, заводи друзей</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">☕</div>
+<h3>Комфорт</h3>
+<p>Бесплатные напитки, удобные игровые кресла, кондиционеры</p>
+</div>
+</div>
+</div>
+
+<div class="section">
+<h2>История</h2>
+<p>
+Клуб Vertex-Hub был основан в 2024 году командой энтузиастов киберспорта.
+За это время мы стали домом для сотен игроков, провели десятки турниров
+и помогли многим начинающим геймерам выйти на профессиональный уровень.
+</p>
+<p style="margin-top:1rem">
+Сегодня мы продолжаем развиваться, внедряя новые технологии и создавая
+лучшие условия для игр и соревнований. Наша цель — стать лучшим киберклубом
+в регионе и точкой притяжения для всего игрового сообщества.
+</p>
+</div>
+
+<div class="section">
+<h2>Присоединяйся к нам!</h2>
+<p>
+Зарегистрируйся на сайте, чтобы получить доступ к эксклюзивным функциям:
+бронированию места, участию в турнирах, системе бонусов и скидок.
+</p>
+<p style="margin-top:1rem">
+<a href="index.html" style="font-size:1.1rem;font-weight:700">← Вернуться на главную и зарегистрироваться</a>
+</p>
+</div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+<div class="modal" id="loginForm">
+<div class="modal-header">
+<h3 class="modal-title">Вход</h3>
+<button class="close-btn" onclick="closeModal()">&times;</button>
+</div>
+<div class="error" id="loginError"></div>
+<input class="form-input" type="text" id="loginUsername" placeholder="Логин">
+<input class="form-input" type="password" id="loginPassword" placeholder="Пароль">
+<button class="btn-submit" onclick="login()">Войти</button>
+<div class="small">Нет аккаунта? <a href="index.html">Регистрация</a></div>
+</div>
+</div>
+
+</body>
+</html>

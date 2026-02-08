@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Турниры | Vertex-Hub</title>
+<script src="auth.js"></script>
+<script src="modal.js"></script>
+
+<style>
+:root{
+--dark-bg:#1a1a1a;
+--neon-blue:#00f2ff;
+--white:#ffffff;
+--gray-light:#333333;
+--gray-dark:#0d0d0d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:'Inter',sans-serif;
+background:var(--dark-bg);
+color:var(--white);
+line-height:1.6;
+}
+.mono-font{font-family:'JetBrains Mono',monospace}
+
+/* HEADER */
+.header{
+position:fixed;top:0;width:100%;
+background:rgba(26,26,26,.95);
+border-bottom:1px solid var(--neon-blue);
+z-index:1000;padding:1rem 2rem
+}
+.header-content{
+max-width:1200px;margin:auto;
+display:flex;justify-content:space-between;align-items:center
+}
+.logo{color:var(--neon-blue);font-size:1.5rem;font-weight:700;text-decoration:none}
+.nav-menu{list-style:none;display:flex;gap:2rem}
+.nav-link{color:#fff;text-decoration:none;transition:.3s}
+.nav-link:hover{color:var(--neon-blue)}
+.nav-link.active{color:var(--neon-blue)}
+.btn-login{
+background:none;border:1px solid var(--neon-blue);
+color:var(--neon-blue);
+padding:.5rem 1.2rem;border-radius:6px;
+cursor:pointer;transition:.3s
+}
+.btn-login:hover{box-shadow:0 0 10px var(--neon-blue)}
+.user-info{color:var(--neon-blue);display:flex;gap:1rem;align-items:center}
+.btn-logout{
+background:none;border:1px solid #ff4d4d;
+color:#ff4d4d;padding:.5rem 1rem;
+border-radius:6px;cursor:pointer;transition:.3s
+}
+.btn-logout:hover{box-shadow:0 0 10px #ff4d4d}
+
+/* MAIN CONTENT */
+.main-content{
+padding-top:6rem;
+min-height:100vh;
+max-width:1200px;
+margin:0 auto;
+padding-left:2rem;
+padding-right:2rem;
+padding-bottom:3rem;
+}
+
+.page-title{
+font-size:3rem;
+color:var(--neon-blue);
+text-align:center;
+margin-bottom:3rem;
+text-shadow:0 0 20px var(--neon-blue);
+}
+
+.tournament-card{
+background:var(--gray-light);
+padding:2rem;
+border-radius:10px;
+border:1px solid var(--neon-blue);
+margin-bottom:2rem;
+transition:.3s;
+}
+
+.tournament-card:hover{
+box-shadow:0 0 25px rgba(0,242,255,.4);
+}
+
+.tournament-header{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+margin-bottom:1rem;
+flex-wrap:wrap;
+gap:1rem;
+}
+
+.tournament-title{
+color:var(--neon-blue);
+font-size:2rem;
+}
+
+.tournament-status{
+padding:.5rem 1rem;
+border-radius:6px;
+font-weight:700;
+font-size:.9rem;
+}
+
+.status-active{
+background:rgba(0,242,255,.2);
+border:1px solid var(--neon-blue);
+color:var(--neon-blue);
+}
+
+.status-upcoming{
+background:rgba(255,193,7,.2);
+border:1px solid #ffc107;
+color:#ffc107;
+}
+
+.status-finished{
+background:rgba(128,128,128,.2);
+border:1px solid #888;
+color:#888;
+}
+
+.tournament-info{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:1rem;
+margin-bottom:1.5rem;
+}
+
+.info-item{
+background:var(--gray-dark);
+padding:1rem;
+border-radius:6px;
+}
+
+.info-label{
+color:#888;
+font-size:.85rem;
+margin-bottom:.3rem;
+}
+
+.info-value{
+color:var(--white);
+font-size:1.1rem;
+font-weight:700;
+}
+
+.prize-pool{
+color:#ffd700;
+font-size:1.3rem;
+}
+
+.btn-register{
+background:var(--neon-blue);
+color:#000;
+border:none;
+padding:.8rem 2rem;
+border-radius:6px;
+font-weight:700;
+cursor:pointer;
+transition:.3s;
+font-size:1rem;
+}
+
+.btn-register:hover{
+box-shadow:0 0 20px var(--neon-blue);
+transform:translateY(-2px);
+}
+
+.btn-register:disabled{
+background:#555;
+cursor:not-allowed;
+box-shadow:none;
+}
+
+a{color:var(--neon-blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* MOBILE RESPONSIVE */
+@media (max-width:768px){
+.header{padding:.8rem 1rem}
+.header-content{
+flex-direction:column;
+align-items:flex-start;
+gap:.8rem;
+}
+.nav-menu{
+width:100%;
+flex-direction:column;
+gap:.8rem;
+}
+.main-content{
+padding-left:1rem;
+padding-right:1rem;
+padding-top:5rem;
+}
+.page-title{font-size:2rem}
+.tournament-header{
+flex-direction:column;
+align-items:flex-start;
+}
+.tournament-info{
+grid-template-columns:1fr;
+}
+}
+
+/* MODAL STYLES */
+.modal-overlay{
+position:fixed;inset:0;
+background:rgba(0,0,0,.8);
+display:flex;justify-content:center;align-items:center;
+opacity:0;visibility:hidden;transition:.3s;
+z-index:2000
+}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal{
+background:var(--gray-light);
+padding:2rem;border-radius:10px;
+width:90%;max-width:400px;
+border:1px solid var(--neon-blue)
+}
+.modal-header{
+display:flex;justify-content:space-between;
+align-items:center;margin-bottom:1.2rem
+}
+.modal-title{color:var(--neon-blue)}
+.close-btn{
+background:none;border:none;
+color:#fff;font-size:1.5rem;
+cursor:pointer
+}
+.form-input{
+width:100%;padding:.7rem;
+margin-bottom:.8rem;
+background:var(--dark-bg);
+border:1px solid var(--neon-blue);
+color:#fff;border-radius:5px
+}
+.form-input:focus{outline:none;box-shadow:0 0 5px var(--neon-blue)}
+.btn-submit{
+width:100%;padding:.7rem;
+background:var(--neon-blue);
+color:#000;border:none;
+border-radius:5px;
+font-weight:700;cursor:pointer;transition:.3s
+}
+.btn-submit:hover{box-shadow:0 0 15px var(--neon-blue)}
+.small{text-align:center;margin-top:.8rem;font-size:.9rem}
+.error{
+color:#ff4d4d;font-size:.85rem;
+display:none;margin-bottom:.5rem;
+padding:.5rem;background:rgba(255,77,77,.1);
+border-radius:5px
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<div class="header-content">
+<a href="index.html" class="logo mono-font">Vertex-Hub</a>
+<ul class="nav-menu">
+<li><a class="nav-link" href="about.html">О клубе</a></li>
+<li><a class="nav-link active" href="tournaments.html">Турниры</a></li>
+<li><a class="nav-link" href="rental.html">Аренда</a></li>
+<li><a class="nav-link" href="contacts.html">Контакты</a></li>
+</ul>
+<div id="authSection">
+<button class="btn-login" onclick="window.location.href='index.html'">Войти</button>
+</div>
+</div>
+</header>
+
+<main class="main-content">
+<h1 class="page-title mono-font">Турниры</h1>
+
+<!-- Активный турнир -->
+<div class="tournament-card">
+<div class="tournament-header">
+<h2 class="tournament-title">🎯 CS2 Spring Cup 2026</h2>
+<span class="tournament-status status-active">Идёт регистрация</span>
+</div>
+<div class="tournament-info">
+<div class="info-item">
+<div class="info-label">Дата</div>
+<div class="info-value">15 февраля 2026</div>
+</div>
+<div class="info-item">
+<div class="info-label">Формат</div>
+<div class="info-value">5v5 Single Elimination</div>
+</div>
+<div class="info-item">
+<div class="info-label">Призовой фонд</div>
+<div class="info-value prize-pool">50 000 ₽</div>
+</div>
+<div class="info-item">
+<div class="info-label">Участников</div>
+<div class="info-value">12 / 16 команд</div>
+</div>
+</div>
+<p style="margin-bottom:1rem">
+Открытый турнир по Counter-Strike 2. Регистрация команд до 12 февраля.
+Все матчи проводятся в клубе на профессиональном оборудовании.
+</p>
+<button class="btn-register" onclick="registerTournament('CS2 Spring Cup')">Зарегистрировать команду</button>
+</div>
+
+<!-- Предстоящий турнир -->
+<div class="tournament-card">
+<div class="tournament-header">
+<h2 class="tournament-title">⚔️ Dota 2 Battle Royale</h2>
+<span class="tournament-status status-upcoming">Скоро</span>
+</div>
+<div class="tournament-info">
+<div class="info-item">
+<div class="info-label">Дата</div>
+<div class="info-value">22 февраля 2026</div>
+</div>
+<div class="info-item">
+<div class="info-label">Формат</div>
+<div class="info-value">5v5 Double Elimination</div>
+</div>
+<div class="info-item">
+<div class="info-label">Призовой фонд</div>
+<div class="info-value prize-pool">75 000 ₽</div>
+</div>
+<div class="info-item">
+<div class="info-label">Участников</div>
+<div class="info-value">0 / 16 команд</div>
+</div>
+</div>
+<p style="margin-bottom:1rem">
+Крупнейший Dota 2 турнир месяца! Регистрация откроется 10 февраля.
+Гарантированные призы для топ-4 команд.
+</p>
+<button class="btn-register" disabled>Регистрация скоро</button>
+</div>
+
+<!-- Предстоящий турнир -->
+<div class="tournament-card">
+<div class="tournament-header">
+<h2 class="tournament-title">🔫 Valorant Champions</h2>
+<span class="tournament-status status-upcoming">Скоро</span>
+</div>
+<div class="tournament-info">
+<div class="info-item">
+<div class="info-label">Дата</div>
+<div class="info-value">1 марта 2026</div>
+</div>
+<div class="info-item">
+<div class="info-label">Формат</div>
+<div class="info-value">5v5 Swiss System</div>
+</div>
+<div class="info-item">
+<div class="info-label">Призовой фонд</div>
+<div class="info-value prize-pool">40 000 ₽</div>
+</div>
+<div class="info-item">
+<div class="info-label">Участников</div>
+<div class="info-value">0 / 12 команд</div>
+</div>
+</div>
+<p style="margin-bottom:1rem">
+Первый Valorant турнир 2026 года в нашем клубе. Покажи свой скилл!
+</p>
+<button class="btn-register" disabled>Регистрация скоро</button>
+</div>
+
+<!-- Завершённый турнир -->
+<div class="tournament-card">
+<div class="tournament-header">
+<h2 class="tournament-title">🏆 CS2 Winter Championship</h2>
+<span class="tournament-status status-finished">Завершён</span>
+</div>
+<div class="tournament-info">
+<div class="info-item">
+<div class="info-label">Дата</div>
+<div class="info-value">25 января 2026</div>
+</div>
+<div class="info-item">
+<div class="info-label">Победитель</div>
+<div class="info-value">Team Vertex</div>
+</div>
+<div class="info-item">
+<div class="info-label">Призовой фонд</div>
+<div class="info-value prize-pool">60 000 ₽</div>
+</div>
+<div class="info-item">
+<div class="info-label">Участников</div>
+<div class="info-value">16 команд</div>
+</div>
+</div>
+<p style="margin-bottom:1rem">
+Итоги зимнего чемпионата: Team Vertex одержала победу в финале со счётом 2:1.
+</p>
+</div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+<div class="modal" id="loginForm">
+<div class="modal-header">
+<h3 class="modal-title">Вход</h3>
+<button class="close-btn" onclick="closeModal()">&times;</button>
+</div>
+<div class="error" id="loginError"></div>
+<input class="form-input" type="text" id="loginUsername" placeholder="Логин">
+<input class="form-input" type="password" id="loginPassword" placeholder="Пароль">
+<button class="btn-submit" onclick="login()">Войти</button>
+<div class="small">Нет аккаунта? <a href="index.html">Регистрация</a></div>
+</div>
+</div>
+
+<script>
+function registerTournament(tournamentName) {
+const currentUser = getCurrentUser();
+if (!currentUser) {
+alert('Для регистрации на турнир необходимо войти в систему');
+openModal();
+return;
+}
+alert(`${currentUser.name}, ваша заявка на турнир "${tournamentName}" принята!\n\nМы свяжемся с вами для подтверждения регистрации команды.`);
+}
+</script>
+
+</body>
+</html>

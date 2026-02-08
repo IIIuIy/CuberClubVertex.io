@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Контакты | Vertex-Hub</title>
+<script src="auth.js"></script>
+<script src="modal.js"></script>
+
+<style>
+:root{
+--dark-bg:#1a1a1a;
+--neon-blue:#00f2ff;
+--white:#ffffff;
+--gray-light:#333333;
+--gray-dark:#0d0d0d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:'Inter',sans-serif;
+background:var(--dark-bg);
+color:var(--white);
+line-height:1.6;
+}
+.mono-font{font-family:'JetBrains Mono',monospace}
+
+/* HEADER */
+.header{
+position:fixed;top:0;width:100%;
+background:rgba(26,26,26,.95);
+border-bottom:1px solid var(--neon-blue);
+z-index:1000;padding:1rem 2rem
+}
+.header-content{
+max-width:1200px;margin:auto;
+display:flex;justify-content:space-between;align-items:center
+}
+.logo{color:var(--neon-blue);font-size:1.5rem;font-weight:700;text-decoration:none}
+.nav-menu{list-style:none;display:flex;gap:2rem}
+.nav-link{color:#fff;text-decoration:none;transition:.3s}
+.nav-link:hover{color:var(--neon-blue)}
+.nav-link.active{color:var(--neon-blue)}
+.btn-login{
+background:none;border:1px solid var(--neon-blue);
+color:var(--neon-blue);
+padding:.5rem 1.2rem;border-radius:6px;
+cursor:pointer;transition:.3s
+}
+.btn-login:hover{box-shadow:0 0 10px var(--neon-blue)}
+.user-info{color:var(--neon-blue);display:flex;gap:1rem;align-items:center}
+.btn-logout{
+background:none;border:1px solid #ff4d4d;
+color:#ff4d4d;padding:.5rem 1rem;
+border-radius:6px;cursor:pointer;transition:.3s
+}
+.btn-logout:hover{box-shadow:0 0 10px #ff4d4d}
+
+/* MAIN CONTENT */
+.main-content{
+padding-top:6rem;
+min-height:100vh;
+max-width:1200px;
+margin:0 auto;
+padding-left:2rem;
+padding-right:2rem;
+padding-bottom:3rem;
+}
+
+.page-title{
+font-size:3rem;
+color:var(--neon-blue);
+text-align:center;
+margin-bottom:3rem;
+text-shadow:0 0 20px var(--neon-blue);
+}
+
+.contacts-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:2rem;
+margin-bottom:3rem;
+}
+
+.contact-card{
+background:var(--gray-light);
+padding:2rem;
+border-radius:10px;
+border:1px solid var(--neon-blue);
+transition:.3s;
+}
+
+.contact-card:hover{
+box-shadow:0 0 25px rgba(0,242,255,.4);
+}
+
+.contact-icon{
+font-size:3rem;
+margin-bottom:1rem;
+}
+
+.contact-card h3{
+color:var(--neon-blue);
+margin-bottom:1rem;
+font-size:1.5rem;
+}
+
+.contact-info{
+font-size:1.1rem;
+line-height:1.8;
+}
+
+.contact-info a{
+color:var(--neon-blue);
+text-decoration:none;
+transition:.3s;
+}
+
+.contact-info a:hover{
+text-decoration:underline;
+}
+
+.map-section{
+background:var(--gray-light);
+padding:2rem;
+border-radius:10px;
+border:1px solid var(--neon-blue);
+margin-bottom:2rem;
+}
+
+.map-section h2{
+color:var(--neon-blue);
+margin-bottom:1rem;
+}
+
+.map-placeholder{
+width:100%;
+height:400px;
+background:var(--gray-dark);
+border-radius:8px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:1.2rem;
+color:#888;
+border:1px solid var(--neon-blue);
+}
+
+.hours-section{
+background:var(--gray-light);
+padding:2rem;
+border-radius:10px;
+border:1px solid var(--neon-blue);
+}
+
+.hours-section h2{
+color:var(--neon-blue);
+margin-bottom:1rem;
+}
+
+.hours-table{
+width:100%;
+margin-top:1rem;
+}
+
+.hours-table tr{
+border-bottom:1px solid var(--gray-dark);
+}
+
+.hours-table td{
+padding:.8rem;
+}
+
+.hours-table td:first-child{
+color:#888;
+width:40%;
+}
+
+.hours-table td:last-child{
+color:var(--white);
+font-weight:700;
+}
+
+.social-links{
+display:flex;
+gap:1rem;
+margin-top:1rem;
+flex-wrap:wrap;
+}
+
+.social-btn{
+background:var(--gray-dark);
+color:var(--neon-blue);
+padding:.8rem 1.5rem;
+border-radius:6px;
+text-decoration:none;
+transition:.3s;
+border:1px solid var(--neon-blue);
+font-weight:700;
+}
+
+.social-btn:hover{
+box-shadow:0 0 15px var(--neon-blue);
+transform:translateY(-2px);
+}
+
+a{color:var(--neon-blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* MOBILE RESPONSIVE */
+@media (max-width:768px){
+.header{padding:.8rem 1rem}
+.header-content{
+flex-direction:column;
+align-items:flex-start;
+gap:.8rem;
+}
+.nav-menu{
+width:100%;
+flex-direction:column;
+gap:.8rem;
+}
+.main-content{
+padding-left:1rem;
+padding-right:1rem;
+padding-top:5rem;
+}
+.page-title{font-size:2rem}
+.contacts-grid{
+grid-template-columns:1fr;
+}
+.social-links{
+flex-direction:column;
+}
+.social-btn{
+width:100%;
+text-align:center;
+}
+}
+
+/* MODAL STYLES */
+.modal-overlay{
+position:fixed;inset:0;
+background:rgba(0,0,0,.8);
+display:flex;justify-content:center;align-items:center;
+opacity:0;visibility:hidden;transition:.3s;
+z-index:2000
+}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal{
+background:var(--gray-light);
+padding:2rem;border-radius:10px;
+width:90%;max-width:400px;
+border:1px solid var(--neon-blue)
+}
+.modal-header{
+display:flex;justify-content:space-between;
+align-items:center;margin-bottom:1.2rem
+}
+.modal-title{color:var(--neon-blue)}
+.close-btn{
+background:none;border:none;
+color:#fff;font-size:1.5rem;
+cursor:pointer
+}
+.form-input{
+width:100%;padding:.7rem;
+margin-bottom:.8rem;
+background:var(--dark-bg);
+border:1px solid var(--neon-blue);
+color:#fff;border-radius:5px
+}
+.form-input:focus{outline:none;box-shadow:0 0 5px var(--neon-blue)}
+.btn-submit{
+width:100%;padding:.7rem;
+background:var(--neon-blue);
+color:#000;border:none;
+border-radius:5px;
+font-weight:700;cursor:pointer;transition:.3s
+}
+.btn-submit:hover{box-shadow:0 0 15px var(--neon-blue)}
+.small{text-align:center;margin-top:.8rem;font-size:.9rem}
+.error{
+color:#ff4d4d;font-size:.85rem;
+display:none;margin-bottom:.5rem;
+padding:.5rem;background:rgba(255,77,77,.1);
+border-radius:5px
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<div class="header-content">
+<a href="index.html" class="logo mono-font">Vertex-Hub</a>
+<ul class="nav-menu">
+<li><a class="nav-link" href="about.html">О клубе</a></li>
+<li><a class="nav-link" href="tournaments.html">Турниры</a></li>
+<li><a class="nav-link" href="rental.html">Аренда</a></li>
+<li><a class="nav-link active" href="contacts.html">Контакты</a></li>
+</ul>
+<div id="authSection">
+<button class="btn-login" onclick="window.location.href='index.html'">Войти</button>
+</div>
+</div>
+</header>
+
+<main class="main-content">
+<h1 class="page-title mono-font">Контакты</h1>
+
+<div class="contacts-grid">
+<!-- Адрес -->
+<div class="contact-card">
+<div class="contact-icon">📍</div>
+<h3>Адрес</h3>
+<div class="contact-info">
+г. Москва,<br>
+ул. Киберспортивная, д. 42<br>
+ТЦ "Gamer's Paradise", 3 этаж
+</div>
+</div>
+
+<!-- Телефон -->
+<div class="contact-card">
+<div class="contact-icon">📞</div>
+<h3>Телефон</h3>
+<div class="contact-info">
+Основной:<br>
+<a href="tel:+74951234567">+7 (495) 123-45-67</a><br><br>
+WhatsApp/Telegram:<br>
+<a href="tel:+79161234567">+7 (916) 123-45-67</a>
+</div>
+</div>
+
+<!-- Email -->
+<div class="contact-card">
+<div class="contact-icon">✉️</div>
+<h3>Email</h3>
+<div class="contact-info">
+Общие вопросы:<br>
+<a href="mailto:info@vertexhub.ru">info@vertexhub.ru</a><br><br>
+Турниры:<br>
+<a href="mailto:tournaments@vertexhub.ru">tournaments@vertexhub.ru</a>
+</div>
+</div>
+</div>
+
+<!-- Карта -->
+<div class="map-section">
+<h2>🗺️ Как нас найти</h2>
+<div class="map-placeholder">
+🗺️ Интерактивная карта<br>
+(г. Москва, ул. Киберспортивная, 42)
+</div>
+<p style="margin-top:1rem;color:#aaa">
+<strong>Как добраться:</strong><br>
+Метро "Парк Культуры" — 5 минут пешком<br>
+Метро "Фрунзенская" — 7 минут пешком<br>
+Парковка: есть, бесплатная для посетителей
+</p>
+</div>
+
+<!-- Режим работы -->
+<div class="hours-section">
+<h2>🕐 Режим работы</h2>
+<table class="hours-table">
+<tr>
+<td>Понедельник - Четверг</td>
+<td>10:00 - 02:00</td>
+</tr>
+<tr>
+<td>Пятница</td>
+<td>10:00 - 06:00</td>
+</tr>
+<tr>
+<td>Суббота</td>
+<td>00:00 - 24:00 (круглосуточно)</td>
+</tr>
+<tr>
+<td>Воскресенье</td>
+<td>00:00 - 02:00, 12:00 - 24:00</td>
+</tr>
+</table>
+<p style="margin-top:1.5rem;color:#aaa">
+⚠️ В праздничные дни режим работы может меняться
+</p>
+</div>
+
+<!-- Социальные сети -->
+<div class="map-section">
+<h2>💬 Мы в социальных сетях</h2>
+<p style="margin-bottom:1rem">
+Подписывайся, следи за новостями, участвуй в конкурсах и получай эксклюзивные бонусы!
+</p>
+<div class="social-links">
+<a href="#" class="social-btn">📱 VK</a>
+<a href="#" class="social-btn">📸 Instagram</a>
+<a href="#" class="social-btn">💬 Telegram</a>
+<a href="#" class="social-btn">🎮 Discord</a>
+<a href="#" class="social-btn">📺 YouTube</a>
+<a href="#" class="social-btn">🐦 Twitter/X</a>
+</div>
+</div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+<div class="modal" id="loginForm">
+<div class="modal-header">
+<h3 class="modal-title">Вход</h3>
+<button class="close-btn" onclick="closeModal()">&times;</button>
+</div>
+<div class="error" id="loginError"></div>
+<input class="form-input" type="text" id="loginUsername" placeholder="Логин">
+<input class="form-input" type="password" id="loginPassword" placeholder="Пароль">
+<button class="btn-submit" onclick="login()">Войти</button>
+<div class="small">Нет аккаунта? <a href="index.html">Регистрация</a></div>
+</div>
+</div>
+
+</body>
+</html>

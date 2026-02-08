@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertex-Hub | Кибер-клуб</title>
+<script src="auth.js"></script>
+<script src="modal.js"></script>
+
+<style>
+:root{
+--dark-bg:#1a1a1a;
+--neon-blue:#00f2ff;
+--white:#ffffff;
+--gray-light:#333333;
+--gray-dark:#0d0d0d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:'Inter',sans-serif;
+background:var(--dark-bg);
+color:var(--white);
+}
+.mono-font{font-family:'JetBrains Mono',monospace}
+
+/* HEADER */
+.header{
+position:fixed;top:0;width:100%;
+background:rgba(26,26,26,.95);
+border-bottom:1px solid var(--neon-blue);
+z-index:1000;padding:1rem 2rem
+}
+.header-content{
+max-width:1200px;margin:auto;
+display:flex;justify-content:space-between;align-items:center
+}
+.logo{color:var(--neon-blue);font-size:1.5rem;font-weight:700}
+.nav-menu{list-style:none;display:flex;gap:2rem}
+.nav-link{color:#fff;text-decoration:none;transition:.3s}
+.nav-link:hover{color:var(--neon-blue)}
+.btn-login{
+background:none;border:1px solid var(--neon-blue);
+color:var(--neon-blue);
+padding:.5rem 1.2rem;border-radius:6px;
+cursor:pointer;transition:.3s
+}
+.btn-login:hover{box-shadow:0 0 10px var(--neon-blue)}
+.user-info{color:var(--neon-blue);display:flex;gap:1rem;align-items:center}
+.btn-logout{
+background:none;border:1px solid #ff4d4d;
+color:#ff4d4d;padding:.5rem 1rem;
+border-radius:6px;cursor:pointer;transition:.3s
+}
+.btn-logout:hover{box-shadow:0 0 10px #ff4d4d}
+
+/* HERO */
+.hero{
+height:100vh;
+display:flex;flex-direction:column;
+justify-content:center;align-items:center;
+text-align:center;
+background:
+linear-gradient(rgba(0,0,0,.8),rgba(0,0,0,.8)),
+radial-gradient(circle,var(--neon-blue) 0%,transparent 70%)
+}
+.hero h1{font-size:4rem;text-shadow:0 0 20px var(--neon-blue);margin-bottom:1rem}
+.hero p{font-size:1.4rem;margin-top:1rem}
+
+/* MODAL */
+.modal-overlay{
+position:fixed;inset:0;
+background:rgba(0,0,0,.8);
+display:flex;justify-content:center;align-items:center;
+opacity:0;visibility:hidden;transition:.3s;
+z-index:2000
+}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal{
+background:var(--gray-light);
+padding:2rem;border-radius:10px;
+width:90%;max-width:400px;
+border:1px solid var(--neon-blue)
+}
+.modal-header{
+display:flex;justify-content:space-between;
+align-items:center;margin-bottom:1.2rem
+}
+.modal-title{color:var(--neon-blue)}
+.close-btn{
+background:none;border:none;
+color:#fff;font-size:1.5rem;
+cursor:pointer
+}
+.form-input{
+width:100%;padding:.7rem;
+margin-bottom:.8rem;
+background:var(--dark-bg);
+border:1px solid var(--neon-blue);
+color:#fff;border-radius:5px
+}
+.form-input:focus{outline:none;box-shadow:0 0 5px var(--neon-blue)}
+.btn-submit{
+width:100%;padding:.7rem;
+background:var(--neon-blue);
+color:#000;border:none;
+border-radius:5px;
+font-weight:700;cursor:pointer;transition:.3s
+}
+.btn-submit:hover{box-shadow:0 0 15px var(--neon-blue)}
+.checkbox-row{
+display:flex;align-items:center;
+gap:.5rem;margin:.8rem 0
+}
+.checkbox-row input{margin:0}
+.small{text-align:center;margin-top:.8rem;font-size:.9rem}
+.error{
+color:#ff4d4d;font-size:.85rem;
+display:none;margin-bottom:.5rem;
+padding:.5rem;background:rgba(255,77,77,.1);
+border-radius:5px
+}
+.success{
+color:#4dff4d;font-size:.85rem;
+display:none;margin-bottom:.5rem;
+padding:.5rem;background:rgba(77,255,77,.1);
+border-radius:5px
+}
+a{color:var(--neon-blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* MOBILE RESPONSIVE */
+@media (max-width:768px){
+.header{padding:.8rem 1rem}
+.header-content{
+flex-direction:column;
+align-items:flex-start;
+gap:.8rem;
+}
+.nav-menu{
+width:100%;
+flex-direction:column;
+gap:.8rem;
+}
+.hero h1{font-size:2.5rem}
+.hero p{font-size:1.1rem;padding:0 1rem}
+.modal{width:95%;padding:1.5rem}
+.logo{font-size:1.2rem}
+}
+
+@media (max-width:480px){
+.hero h1{font-size:2rem}
+.hero p{font-size:1rem}
+.btn-login,.btn-logout{
+width:100%;
+text-align:center;
+}
+.user-info{
+width:100%;
+flex-direction:column;
+align-items:flex-start;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<div class="header-content">
+<div class="logo mono-font">Vertex-Hub</div>
+<ul class="nav-menu">
+<li><a class="nav-link" href="about.html">О клубе</a></li>
+<li><a class="nav-link" href="tournaments.html">Турниры</a></li>
+<li><a class="nav-link" href="rental.html">Аренда</a></li>
+<li><a class="nav-link" href="contacts.html">Контакты</a></li>
+</ul>
+<div id="authSection">
+<button class="btn-login" onclick="openModal()">Войти</button>
+</div>
+</div>
+</header>
+
+<section class="hero">
+<h1 class="mono-font">Vertex Hub</h1>
+<p>Место, где рождаются кибер-чемпионы</p>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+
+<!-- LOGIN -->
+<div class="modal" id="loginForm">
+<div class="modal-header">
+<h3 class="modal-title">Вход</h3>
+<button class="close-btn" onclick="closeModal()">&times;</button>
+</div>
+<div class="error" id="loginError"></div>
+<input class="form-input" type="text" id="loginUsername" placeholder="Логин">
+<input class="form-input" type="password" id="loginPassword" placeholder="Пароль">
+<button class="btn-submit" onclick="login()">Войти</button>
+<div class="small">Нет аккаунта? <a href="#" onclick="switchForm()">Регистрация</a></div>
+</div>
+
+<!-- REGISTER -->
+<div class="modal" id="registerForm" style="display:none">
+<div class="modal-header">
+<h3 class="modal-title">Регистрация</h3>
+<button class="close-btn" onclick="closeModal()">&times;</button>
+</div>
+<div class="error" id="registerError"></div>
+<div class="success" id="registerSuccess"></div>
+<input class="form-input" type="text" id="registerName" placeholder="Имя (3-12 символов)">
+<input class="form-input" type="text" id="registerLogin" placeholder="Логин (3-12 символов, латиница)">
+<input class="form-input" type="email" id="registerEmail" placeholder="Email">
+<input class="form-input" type="password" id="registerPassword" placeholder="Пароль (мин. 8 символов)">
+<input class="form-input" type="password" id="registerPasswordConfirm" placeholder="Подтвердите пароль">
+
+<div class="checkbox-row">
+<input type="checkbox" id="rules">
+<label for="rules">Согласен с <a href="rules.html" target="_blank">правилами</a></label>
+</div>
+
+<button class="btn-submit" onclick="register()">Зарегистрироваться</button>
+<div class="small"><a href="#" onclick="switchForm()">Уже есть аккаунт</a></div>
+</div>
+
+</div>
+
+</body>
+</html>

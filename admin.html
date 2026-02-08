@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ-панель | Vertex-Hub</title>
+<script src="auth.js"></script>
+<script src="modal.js"></script>
+
+<style>
+:root{
+--dark-bg:#1a1a1a;
+--neon-blue:#00f2ff;
+--white:#ffffff;
+--gray-light:#333333;
+--gray-dark:#0d0d0d;
+--green:#4dff4d;
+--yellow:#ffc107;
+--red:#ff4d4d;
+--gold:#ffd700;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:'Inter',sans-serif;
+background:var(--dark-bg);
+color:var(--white);
+line-height:1.6;
+}
+.mono-font{font-family:'JetBrains Mono',monospace}
+
+/* HEADER */
+.header{
+position:fixed;top:0;width:100%;
+background:rgba(26,26,26,.95);
+border-bottom:1px solid var(--gold);
+z-index:1000;padding:1rem 2rem
+}
+.header-content{
+max-width:1400px;margin:auto;
+display:flex;justify-content:space-between;align-items:center;
+flex-wrap:wrap;gap:1rem;
+}
+.logo{color:var(--gold);font-size:1.5rem;font-weight:700;text-decoration:none}
+.nav-menu{list-style:none;display:flex;gap:2rem;flex-wrap:wrap}
+.nav-link{color:#fff;text-decoration:none;transition:.3s}
+.nav-link:hover{color:var(--gold)}
+.btn-back{
+background:none;border:1px solid var(--neon-blue);
+color:var(--neon-blue);
+padding:.5rem 1.2rem;border-radius:6px;
+cursor:pointer;transition:.3s;
+text-decoration:none;
+display:inline-block;
+}
+.btn-back:hover{box-shadow:0 0 10px var(--neon-blue)}
+
+/* MAIN CONTENT */
+.main-content{
+padding-top:6rem;
+min-height:100vh;
+max-width:1400px;
+margin:0 auto;
+padding-left:2rem;
+padding-right:2rem;
+padding-bottom:3rem;
+}
+
+.page-title{
+font-size:2.5rem;
+color:var(--gold);
+margin-bottom:2rem;
+text-shadow:0 0 20px var(--gold);
+}
+
+.admin-badge{
+display:inline-block;
+background:rgba(255,215,0,.2);
+color:var(--gold);
+padding:.5rem 1rem;
+border-radius:6px;
+border:1px solid var(--gold);
+margin-bottom:2rem;
+}
+
+/* STATS */
+.stats-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:1.5rem;
+margin-bottom:3rem;
+}
+
+.stat-card{
+background:var(--gray-light);
+padding:2rem;
+border-radius:10px;
+border:1px solid var(--gold);
+text-align:center;
+transition:.3s;
+}
+
+.stat-card:hover{
+box-shadow:0 0 25px rgba(255,215,0,.3);
+transform:translateY(-5px);
+}
+
+.stat-value{
+font-size:3rem;
+color:var(--gold);
+font-weight:700;
+margin-bottom:.5rem;
+}
+
+.stat-label{
+color:#aaa;
+font-size:1rem;
+}
+
+/* TABLES */
+.section{
+background:var(--gray-light);
+padding:2rem;
+border-radius:10px;
+border:1px solid var(--gold);
+margin-bottom:2rem;
+}
+
+.section-title{
+color:var(--gold);
+font-size:1.8rem;
+margin-bottom:1.5rem;
+}
+
+.table-container{
+overflow-x:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+thead{
+background:var(--gray-dark);
+}
+
+th{
+padding:1rem;
+text-align:left;
+color:var(--gold);
+font-weight:700;
+border-bottom:2px solid var(--gold);
+}
+
+td{
+padding:1rem;
+border-bottom:1px solid var(--gray-dark);
+}
+
+tbody tr:hover{
+background:var(--gray-dark);
+}
+
+.user-login{
+color:var(--neon-blue);
+font-weight:700;
+}
+
+.user-admin{
+color:var(--gold);
+}
+
+.status-active{
+color:var(--green);
+}
+
+.status-cancelled{
+color:#888;
+}
+
+.btn-action{
+background:none;
+border:1px solid var(--neon-blue);
+color:var(--neon-blue);
+padding:.4rem .8rem;
+border-radius:4px;
+cursor:pointer;
+transition:.3s;
+font-size:.85rem;
+}
+
+.btn-action:hover{
+background:var(--neon-blue);
+color:#000;
+}
+
+.btn-danger{
+border-color:var(--red);
+color:var(--red);
+}
+
+.btn-danger:hover{
+background:var(--red);
+color:#fff;
+}
+
+/* AUTH MODAL */
+.auth-modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.9);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:3000;
+}
+
+.auth-box{
+background:var(--gray-light);
+padding:3rem;
+border-radius:10px;
+border:2px solid var(--gold);
+width:90%;
+max-width:500px;
+text-align:center;
+}
+
+.auth-icon{
+font-size:4rem;
+margin-bottom:1rem;
+}
+
+.auth-title{
+color:var(--gold);
+font-size:2rem;
+margin-bottom:1rem;
+}
+
+.auth-description{
+color:#aaa;
+margin-bottom:2rem;
+}
+
+.form-input{
+width:100%;
+padding:1rem;
+margin-bottom:1rem;
+background:var(--dark-bg);
+border:1px solid var(--gold);
+color:#fff;
+border-radius:5px;
+font-size:1rem;
+text-align:center;
+}
+
+.form-input:focus{
+outline:none;
+box-shadow:0 0 10px rgba(255,215,0,.3);
+}
+
+.btn-submit{
+width:100%;
+padding:1rem;
+background:var(--gold);
+color:#000;
+border:none;
+border-radius:5px;
+font-weight:700;
+cursor:pointer;
+transition:.3s;
+font-size:1rem;
+}
+
+.btn-submit:hover{
+box-shadow:0 0 20px var(--gold);
+transform:translateY(-2px);
+}
+
+.error-msg{
+color:var(--red);
+margin-top:1rem;
+display:none;
+}
+
+.empty-state{
+text-align:center;
+padding:3rem;
+color:#888;
+}
+
+/* MOBILE */
+@media (max-width:768px){
+.header{padding:.8rem 1rem}
+.header-content{
+flex-direction:column;
+align-items:flex-start;
+}
+.nav-menu{
+width:100%;
+flex-direction:column;
+gap:1rem;
+}
+.main-content{
+padding-left:1rem;
+padding-right:1rem;
+padding-top:5rem;
+}
+.page-title{font-size:2rem}
+.stats-grid{
+grid-template-columns:1fr;
+}
+.table-container{
+font-size:.85rem;
+}
+th,td{
+padding:.5rem;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<div class="header-content">
+<a href="index.html" class="logo mono-font">⚡ ADMIN PANEL</a>
+<ul class="nav-menu">
+<li><a class="nav-link" href="index.html">Главная</a></li>
+<li><a class="nav-link" href="profile.html">Личный кабинет</a></li>
+</ul>
+<a href="profile.html" class="btn-back">← Назад</a>
+</div>
+</header>
+
+<main class="main-content" id="adminContent" style="display:none">
+<h1 class="page-title mono-font">👑 Панель администратора</h1>
+<div class="admin-badge">🔐 Режим администратора активен</div>
+
+<!-- СТАТИСТИКА -->
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-value" id="totalUsers">0</div>
+<div class="stat-label">Всего пользователей</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="totalBookingsAdmin">0</div>
+<div class="stat-label">Всего бронирований</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="activeBookingsAdmin">0</div>
+<div class="stat-label">Активных бронирований</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="totalRevenueAdmin">0 ₽</div>
+<div class="stat-label">Общая выручка</div>
+</div>
+</div>
+
+<!-- ПОЛЬЗОВАТЕЛИ -->
+<div class="section">
+<h2 class="section-title">👥 Зарегистрированные пользователи</h2>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Логин</th>
+<th>Имя</th>
+<th>Email</th>
+<th>Дата регистрации</th>
+<th>Баланс</th>
+<th>Роль</th>
+</tr>
+</thead>
+<tbody id="usersTable"></tbody>
+</table>
+</div>
+</div>
+
+<!-- БРОНИРОВАНИЯ -->
+<div class="section">
+<h2 class="section-title">📋 Все бронирования</h2>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Пользователь</th>
+<th>Тариф</th>
+<th>Дата</th>
+<th>Время</th>
+<th>Часов</th>
+<th>ПК</th>
+<th>Сумма</th>
+<th>Статус</th>
+<th>Действия</th>
+</tr>
+</thead>
+<tbody id="bookingsTable"></tbody>
+</table>
+</div>
+</div>
+
+</main>
+
+<!-- AUTH MODAL -->
+<div class="auth-modal" id="authModal">
+<div class="auth-box">
+<div class="auth-icon">🔐</div>
+<h2 class="auth-title">Доступ ограничен</h2>
+<p class="auth-description">
+Введите административный пароль для доступа к панели управления.
+Этот раздел доступен только владельцу клуба.
+</p>
+<input 
+type="password" 
+class="form-input" 
+id="adminPassword" 
+placeholder="Введите админ-пароль"
+onkeypress="if(event.key==='Enter')verifyAdminPassword()"
+>
+<button class="btn-submit" onclick="verifyAdminPassword()">Войти в панель</button>
+<p class="error-msg" id="authError">Неверный пароль!</p>
+<p style="margin-top:1.5rem;color:#888;font-size:.9rem">
+<a href="profile.html" style="color:var(--neon-blue)">← Вернуться в личный кабинет</a>
+</p>
+</div>
+</div>
+
+<script>
+// Проверка прав доступа
+if (!isAdmin()) {
+    alert('Доступ запрещён! Эта страница доступна только администраторам.');
+    window.location.href = 'profile.html';
+}
+
+// Проверка админ-пароля
+function verifyAdminPassword() {
+    const password = document.getElementById('adminPassword').value;
+    const errorMsg = document.getElementById('authError');
+    
+    if (checkAdminPassword(password)) {
+        document.getElementById('authModal').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        loadAdminData();
+    } else {
+        errorMsg.style.display = 'block';
+        document.getElementById('adminPassword').value = '';
+        setTimeout(() => {
+            errorMsg.style.display = 'none';
+        }, 3000);
+    }
+}
+
+// Загрузка данных админ-панели
+function loadAdminData() {
+    const users = getAllUsersAdmin();
+    const bookings = getAllBookingsAdmin();
+    
+    // Статистика
+    document.getElementById('totalUsers').textContent = users.length;
+    document.getElementById('totalBookingsAdmin').textContent = bookings.length;
+    
+    const activeBookings = bookings.filter(b => b.status === 'active');
+    document.getElementById('activeBookingsAdmin').textContent = activeBookings.length;
+    
+    let totalRevenue = 0;
+    activeBookings.forEach(b => {
+        totalRevenue += parseInt(b.total.replace(/[^\d]/g, ''));
+    });
+    document.getElementById('totalRevenueAdmin').textContent = totalRevenue.toLocaleString('ru-RU') + ' ₽';
+    
+    // Таблица пользователей
+    const usersTable = document.getElementById('usersTable');
+    if (users.length === 0) {
+        usersTable.innerHTML = '<tr><td colspan="6" class="empty-state">Нет пользователей</td></tr>';
+    } else {
+        usersTable.innerHTML = users.map(user => {
+            const regDate = new Date(user.registeredAt).toLocaleDateString('ru-RU');
+            const isAdminUser = user.login === 'qwerty';
+            return `
+                <tr>
+                    <td class="${isAdminUser ? 'user-admin' : 'user-login'}">
+                        ${user.login} ${isAdminUser ? '👑' : ''}
+                    </td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${regDate}</td>
+                    <td>${user.balance || 0} ₽</td>
+                    <td>${isAdminUser ? '<span style="color:var(--gold)">👑 Администратор</span>' : 'Пользователь'}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+    
+    // Таблица бронирований
+    const bookingsTable = document.getElementById('bookingsTable');
+    if (bookings.length === 0) {
+        bookingsTable.innerHTML = '<tr><td colspan="10" class="empty-state">Нет бронирований</td></tr>';
+    } else {
+        bookingsTable.innerHTML = bookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map(booking => {
+            const user = users.find(u => u.id === booking.userId);
+            const userName = user ? user.login : 'Удалён';
+            return `
+                <tr>
+                    <td>#${booking.id.slice(-4)}</td>
+                    <td class="user-login">${userName}</td>
+                    <td>${booking.tariff}</td>
+                    <td>${booking.date}</td>
+                    <td>${booking.time}</td>
+                    <td>${booking.hours}ч</td>
+                    <td>${booking.pcCount}</td>
+                    <td>${booking.total}</td>
+                    <td class="status-${booking.status}">
+                        ${booking.status === 'active' ? '✓ Активно' : '✗ Отменено'}
+                    </td>
+                    <td>
+                        ${booking.status === 'active' ? 
+                            `<button class="btn-action btn-danger" onclick="adminCancelBooking('${booking.id}')">Отменить</button>` 
+                            : '-'}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+}
+
+// Отмена бронирования администратором
+function adminCancelBooking(bookingId) {
+    if (confirm('Вы уверены, что хотите отменить это бронирование?')) {
+        if (cancelBooking(bookingId)) {
+            alert('Бронирование отменено');
+            loadAdminData();
+        }
+    }
+}
+
+// Фокус на поле ввода пароля
+document.getElementById('adminPassword').focus();
+</script>
+
+</body>
+</html>
